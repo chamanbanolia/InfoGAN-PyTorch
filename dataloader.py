@@ -49,6 +49,17 @@ def get_data(dataset, batch_size):
 
         dataset = dsets.ImageFolder(root=root+'celeba/', transform=transform)
 
+    elif dataset == 'PatternNet':
+        root = '/kaggle/input/patternnet/'
+        transform = transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(256),
+            transforms.ToTensor(),
+            transforms.Normalize((0.5, 0.5, 0.5),
+                (0.5, 0.5, 0.5))])
+
+        dataset = dsets.ImageFolder(root=root+'PatternNet/images/', transform=transform)
+
     # Create dataloader.
     dataloader = torch.utils.data.DataLoader(dataset, 
                                             batch_size=batch_size, 
