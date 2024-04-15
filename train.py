@@ -64,8 +64,8 @@ elif(params['dataset'] == 'FashionMNIST'):
     params['num_con_c'] = 2
 elif(params['dataset'] == 'PatternNet'):
     params['num_z'] = 256
-    params['num_dis_c'] = 38
-    params['dis_c_dim'] = 15
+    params['num_dis_c'] = 15
+    params['dis_c_dim'] = 38
     params['num_con_c'] = 0
 
 # Plot the training images.
