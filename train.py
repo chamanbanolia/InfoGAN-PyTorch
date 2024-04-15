@@ -106,22 +106,40 @@ optimD = optim.Adam([{'params': discriminator.parameters()}, {'params': netD.par
 optimG = optim.Adam([{'params': netG.parameters()}, {'params': netQ.parameters()}], lr=params['learning_rate'], betas=(params['beta1'], params['beta2']))
 
 # Fixed Noise
-z = torch.randn(100, params['num_z'], 1, 1, device=device)
-fixed_noise = z
-if(params['num_dis_c'] != 0):
-    idx = np.arange(params['dis_c_dim']).repeat(10)
-    dis_c = torch.zeros(100, params['num_dis_c'], params['dis_c_dim'], device=device)
-    for i in range(params['num_dis_c']):
-        dis_c[torch.arange(0, 100), i, idx] = 1.0
+if params['dataset'] != 'PatternNet':
+    z = torch.randn(100, params['num_z'], 1, 1, device=device)
+    fixed_noise = z
+    if(params['num_dis_c'] != 0):
+        idx = np.arange(params['dis_c_dim']).repeat(10)
+        dis_c = torch.zeros(100, params['num_dis_c'], params['dis_c_dim'], device=device)
+        for i in range(params['num_dis_c']):
+            dis_c[torch.arange(0, 100), i, idx] = 1.0
+    
+        dis_c = dis_c.view(100, -1, 1, 1)
+    
+        fixed_noise = torch.cat((fixed_noise, dis_c), dim=1)
+    
+    if(params['num_con_c'] != 0):
+        con_c = torch.rand(100, params['num_con_c'], 1, 1, device=device) * 2 - 1
+        fixed_noise = torch.cat((fixed_noise, con_c), dim=1)
 
-    dis_c = dis_c.view(100, -1, 1, 1)
-
-    fixed_noise = torch.cat((fixed_noise, dis_c), dim=1)
-
-if(params['num_con_c'] != 0):
-    con_c = torch.rand(100, params['num_con_c'], 1, 1, device=device) * 2 - 1
-    fixed_noise = torch.cat((fixed_noise, con_c), dim=1)
-
+else:
+    z = torch.randn(380, params['num_z'], 1, 1, device=device)
+    fixed_noise = z
+    if(params['num_dis_c'] != 0):
+        idx = np.arange(params['dis_c_dim']).repeat(10)
+        dis_c = torch.zeros(380, params['num_dis_c'], params['dis_c_dim'], device=device)
+        for i in range(params['num_dis_c']):
+            dis_c[torch.arange(0, 380), i, idx] = 1.0
+    
+        dis_c = dis_c.view(380, -1, 1, 1)
+    
+        fixed_noise = torch.cat((fixed_noise, dis_c), dim=1)
+    
+    if(params['num_con_c'] != 0):
+        con_c = torch.rand(380, params['num_con_c'], 1, 1, device=device) * 2 - 1
+        fixed_noise = torch.cat((fixed_noise, con_c), dim=1)
+        
 real_label = 1
 fake_label = 0
 
