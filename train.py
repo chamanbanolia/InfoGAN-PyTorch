@@ -146,7 +146,7 @@ for epoch in range(params['num_epochs']):
         label = torch.full((b_size, ), real_label, device=device)
         output1 = discriminator(real_data)
         probs_real = netD(output1).view(-1)
-        loss_real = criterionD(probs_real, label)
+        loss_real = criterionD(probs_real, label.type(torch.float32))
         # Calculate gradients.
         loss_real.backward()
 
@@ -156,7 +156,7 @@ for epoch in range(params['num_epochs']):
         fake_data = netG(noise)
         output2 = discriminator(fake_data.detach())
         probs_fake = netD(output2).view(-1)
-        loss_fake = criterionD(probs_fake, label)
+        loss_fake = criterionD(probs_fake, label.type(torch.float32))
         # Calculate gradients.
         loss_fake.backward()
 
@@ -172,7 +172,7 @@ for epoch in range(params['num_epochs']):
         output = discriminator(fake_data)
         label.fill_(real_label)
         probs_fake = netD(output).view(-1)
-        gen_loss = criterionD(probs_fake, label)
+        gen_loss = criterionD(probs_fake, label.type(torch.float32))
 
         q_logits, q_mu, q_var = netQ(output)
         target = torch.LongTensor(idx).to(device)
