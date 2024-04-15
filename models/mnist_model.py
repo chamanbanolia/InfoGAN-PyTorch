@@ -23,11 +23,14 @@ class Generator(nn.Module):
 
     def forward(self, x):
         x = F.relu(self.bn1(self.tconv1(x)))
+        print("G: Shape after tconv1: ", x.shape)
         x = F.relu(self.bn2(self.tconv2(x)))
+        print("G: Shape after tconv2: ", x.shape)
         x = F.relu(self.bn3(self.tconv3(x)))
-
+        print("G: Shape after tconv3: ", x.shape)
         img = torch.sigmoid(self.tconv4(x))
-
+        print("G: Shape after tconv4: ", img.shape)
+        
         return img
 
 class Discriminator(nn.Module):
@@ -44,8 +47,11 @@ class Discriminator(nn.Module):
 
     def forward(self, x):
         x = F.leaky_relu(self.conv1(x), 0.1, inplace=True)
+        print("D: Shape after conv1: ", x.shape)
         x = F.leaky_relu(self.bn2(self.conv2(x)), 0.1, inplace=True)
+        print("D: Shape after conv2: ", x.shape)
         x = F.leaky_relu(self.bn3(self.conv3(x)), 0.1, inplace=True)
+        print("D: Shape after conv3: ", x.shape)
 
         return x
 
