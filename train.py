@@ -21,6 +21,8 @@ elif(params['dataset'] == 'CelebA'):
     from models.celeba_model import Generator, Discriminator, DHead, QHead
 elif(params['dataset'] == 'FashionMNIST'):
     from models.mnist_model import Generator, Discriminator, DHead, QHead
+elif(params['dataset'] == 'PatternNet'):
+    from models.patternnet_model import Generator, Discriminator, DHead, QHead
 
 # Set random seed for reproducibility.
 seed = 1123
@@ -60,6 +62,11 @@ elif(params['dataset'] == 'FashionMNIST'):
     params['num_dis_c'] = 1
     params['dis_c_dim'] = 10
     params['num_con_c'] = 2
+elif(params['dataset'] == 'PatternNet'):
+    params['num_z'] = 256
+    params['num_dis_c'] = 38
+    params['dis_c_dim'] = 15
+    params['num_con_c'] = 0
 
 # Plot the training images.
 sample_batch = next(iter(dataloader))
@@ -67,7 +74,7 @@ plt.figure(figsize=(10, 10))
 plt.axis("off")
 plt.imshow(np.transpose(vutils.make_grid(
     sample_batch[0].to(device)[ : 100], nrow=10, padding=2, normalize=True).cpu(), (1, 2, 0)))
-plt.savefig('Training Images {}'.format(params['dataset']))
+plt.savefig('/kaggle/working/Training Images {}'.format(params['dataset']))
 plt.close('all')
 
 # Initialise the network.
@@ -219,7 +226,7 @@ for epoch in range(params['num_epochs']):
         plt.figure(figsize=(10, 10))
         plt.axis("off")
         plt.imshow(np.transpose(vutils.make_grid(gen_data, nrow=10, padding=2, normalize=True), (1,2,0)))
-        plt.savefig("Epoch_%d {}".format(params['dataset']) %(epoch+1))
+        plt.savefig("/kaggle/working/Epoch_%d {}".format(params['dataset']) %(epoch+1))
         plt.close('all')
 
     # Save network weights.
@@ -232,7 +239,7 @@ for epoch in range(params['num_epochs']):
             'optimD' : optimD.state_dict(),
             'optimG' : optimG.state_dict(),
             'params' : params
-            }, 'checkpoint/model_epoch_%d_{}'.format(params['dataset']) %(epoch+1))
+            }, '/kaggle/working/checkpoint/model_epoch_%d_{}'.format(params['dataset']) %(epoch+1))
 
 training_time = time.time() - start_time
 print("-"*50)
@@ -245,7 +252,7 @@ with torch.no_grad():
 plt.figure(figsize=(10, 10))
 plt.axis("off")
 plt.imshow(np.transpose(vutils.make_grid(gen_data, nrow=10, padding=2, normalize=True), (1,2,0)))
-plt.savefig("Epoch_%d_{}".format(params['dataset']) %(params['num_epochs']))
+plt.savefig("/kaggle/working/Epoch_%d_{}".format(params['dataset']) %(params['num_epochs']))
 
 # Save network weights.
 torch.save({
@@ -256,7 +263,7 @@ torch.save({
     'optimD' : optimD.state_dict(),
     'optimG' : optimG.state_dict(),
     'params' : params
-    }, 'checkpoint/model_final_{}'.format(params['dataset']))
+    }, '/kaggle/working/checkpoint/model_final_{}'.format(params['dataset']))
 
 
 # Plot the training losses.
@@ -267,12 +274,12 @@ plt.plot(D_losses,label="D")
 plt.xlabel("iterations")
 plt.ylabel("Loss")
 plt.legend()
-plt.savefig("Loss Curve {}".format(params['dataset']))
+plt.savefig("/kaggle/working/Loss Curve {}".format(params['dataset']))
 
 # Animation showing the improvements of the generator.
 fig = plt.figure(figsize=(10,10))
 plt.axis("off")
 ims = [[plt.imshow(np.transpose(i,(1,2,0)), animated=True)] for i in img_list]
 anim = animation.ArtistAnimation(fig, ims, interval=1000, repeat_delay=1000, blit=True)
-anim.save('infoGAN_{}.gif'.format(params['dataset']), dpi=80, writer='imagemagick')
+anim.save('/kaggle/working/infoGAN_{}.gif'.format(params['dataset']), dpi=80, writer='imagemagick')
 plt.show()
