@@ -203,7 +203,7 @@ for epoch in range(params['num_epochs']):
         target = torch.LongTensor(idx).to(device)
         q_logits = q_logits.to(device).type(torch.float)
         target = target.type(torch.long)
-        print(type(q_logits), type(target))
+        print(q_logits, target)
         # Calculating loss for discrete latent code.
         dis_loss = 0
         for j in range(params['num_dis_c']):
