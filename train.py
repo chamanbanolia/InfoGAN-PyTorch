@@ -31,9 +31,12 @@ torch.manual_seed(seed)
 print("Random Seed: ", seed)
 
 # Use GPU if available.
-device = torch.device("cuda" if(torch.cuda.is_available()) else "cpu")
+device = torch.device("cuda:0" if(torch.cuda.is_available()) else "cpu")
 print(device, " will be used.\n")
 
+# Saving directory
+#save_root = '/kaggle/working # Kaggle
+save_root = '/home/chaman_1830628/Desktop/IITB/Sem2/GNR638/InfoGAN-PyTorch-master/results/patternnet_results' # machine path
 dataloader = get_data(params['dataset'], params['batch_size'])
 
 # Set appropriate hyperparameters depending on the dataset used.
@@ -74,7 +77,7 @@ plt.figure(figsize=(10, 10))
 plt.axis("off")
 plt.imshow(np.transpose(vutils.make_grid(
     sample_batch[0].to(device)[ : 100], nrow=10, padding=2, normalize=True).cpu(), (1, 2, 0)))
-plt.savefig('/kaggle/working/Training Images {}'.format(params['dataset']))
+plt.savefig('{}/Training Images {}'.format(save_root, params['dataset']))
 plt.close('all')
 
 # Initialise the network.
@@ -170,6 +173,7 @@ for epoch in range(params['num_epochs']):
         # Real data
         label = torch.full((b_size, ), real_label, device=device)
         output1 = discriminator(real_data)
+        print("Input shape to netD: ", output1.shape)
         probs_real = netD(output1).view(-1)
         loss_real = criterionD(probs_real, label.type(torch.float32))
         # Calculate gradients.
@@ -201,13 +205,11 @@ for epoch in range(params['num_epochs']):
 
         q_logits, q_mu, q_var = netQ(output)
         target = torch.LongTensor(idx).to(device)
-        q_logits = q_logits.to(device).type(torch.float)
-        target = target.type(torch.long)
-        print(q_logits, target)
         # Calculating loss for discrete latent code.
         dis_loss = 0
         for j in range(params['num_dis_c']):
-            dis_loss += criterionQ_dis(q_logits[:, j*10 : j*10 + 10], target[j])
+            print(q_logits[:, j*38: j*38+38].shape, target[j].shape)
+            dis_loss += criterionQ_dis(q_logits[:, j*38 : j*38 + 38], target[j])
 
         # Calculating loss for continuous latent code.
         con_loss = 0
@@ -247,7 +249,7 @@ for epoch in range(params['num_epochs']):
         plt.figure(figsize=(10, 10))
         plt.axis("off")
         plt.imshow(np.transpose(vutils.make_grid(gen_data, nrow=10, padding=2, normalize=True), (1,2,0)))
-        plt.savefig("/kaggle/working/Epoch_%d {}".format(params['dataset']) %(epoch+1))
+        plt.savefig("{}/Epoch_%d {}".format(save_root, params['dataset']) %(epoch+1))
         plt.close('all')
 
     # Save network weights.
@@ -260,7 +262,7 @@ for epoch in range(params['num_epochs']):
             'optimD' : optimD.state_dict(),
             'optimG' : optimG.state_dict(),
             'params' : params
-            }, '/kaggle/working/checkpoint/model_epoch_%d_{}'.format(params['dataset']) %(epoch+1))
+            }, '{}/checkpoint/model_epoch_%d_{}'.format(params['dataset']) %(epoch+1))
 
 training_time = time.time() - start_time
 print("-"*50)
@@ -273,7 +275,7 @@ with torch.no_grad():
 plt.figure(figsize=(10, 10))
 plt.axis("off")
 plt.imshow(np.transpose(vutils.make_grid(gen_data, nrow=10, padding=2, normalize=True), (1,2,0)))
-plt.savefig("/kaggle/working/Epoch_%d_{}".format(params['dataset']) %(params['num_epochs']))
+plt.savefig("{}/Epoch_%d_{}".format(params['dataset']) %(save_root, params['num_epochs']))
 
 # Save network weights.
 torch.save({
@@ -284,7 +286,7 @@ torch.save({
     'optimD' : optimD.state_dict(),
     'optimG' : optimG.state_dict(),
     'params' : params
-    }, '/kaggle/working/checkpoint/model_final_{}'.format(params['dataset']))
+    }, '{}/checkpoint/model_final_{}'.format(save_root, params['dataset']))
 
 
 # Plot the training losses.
@@ -295,12 +297,12 @@ plt.plot(D_losses,label="D")
 plt.xlabel("iterations")
 plt.ylabel("Loss")
 plt.legend()
-plt.savefig("/kaggle/working/Loss Curve {}".format(params['dataset']))
+plt.savefig("{}/Loss Curve {}".format(save_root, params['dataset']))
 
 # Animation showing the improvements of the generator.
 fig = plt.figure(figsize=(10,10))
 plt.axis("off")
 ims = [[plt.imshow(np.transpose(i,(1,2,0)), animated=True)] for i in img_list]
 anim = animation.ArtistAnimation(fig, ims, interval=1000, repeat_delay=1000, blit=True)
-anim.save('/kaggle/working/infoGAN_{}.gif'.format(params['dataset']), dpi=80, writer='imagemagick')
+anim.save('{}/infoGAN_{}.gif'.format(save_root, params['dataset']), dpi=80, writer='imagemagick')
 plt.show()
