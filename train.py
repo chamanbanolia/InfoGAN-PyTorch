@@ -31,7 +31,7 @@ torch.manual_seed(seed)
 print("Random Seed: ", seed)
 
 # Use GPU if available.
-device = torch.device("cuda:0" if(torch.cuda.is_available()) else "cpu")
+device = torch.device("cuda" if(torch.cuda.is_available()) else "cpu")
 print(device, " will be used.\n")
 
 dataloader = get_data(params['dataset'], params['batch_size'])
@@ -201,6 +201,8 @@ for epoch in range(params['num_epochs']):
 
         q_logits, q_mu, q_var = netQ(output)
         target = torch.LongTensor(idx).to(device)
+        q_logits = q_logits.to(device).astype(torch.long)
+        print(q_logits.dtype, target.dtype)
         # Calculating loss for discrete latent code.
         dis_loss = 0
         for j in range(params['num_dis_c']):
