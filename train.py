@@ -262,7 +262,7 @@ for epoch in range(params['num_epochs']):
             'optimD' : optimD.state_dict(),
             'optimG' : optimG.state_dict(),
             'params' : params
-            }, '{}/checkpoint/model_epoch_%d_{}'.format(params['dataset']) %(epoch+1))
+            }, '{}/checkpoint/model_epoch_%d_{}'.format(save_root, params['dataset']) %(epoch+1))
 
 training_time = time.time() - start_time
 print("-"*50)
@@ -275,7 +275,7 @@ with torch.no_grad():
 plt.figure(figsize=(10, 10))
 plt.axis("off")
 plt.imshow(np.transpose(vutils.make_grid(gen_data, nrow=10, padding=2, normalize=True), (1,2,0)))
-plt.savefig("{}/Epoch_%d_{}".format(params['dataset']) %(save_root, params['num_epochs']))
+plt.savefig("{}/Epoch_%d_{}".format(save_root, params['dataset']) %(params['num_epochs']))
 
 # Save network weights.
 torch.save({
