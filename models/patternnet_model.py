@@ -85,37 +85,43 @@ class DHead(nn.Module):
 	def __init__(self):
 		super().__init__()
 
-		self.conv = nn.Conv2d(1024, 1, 15)
+		self.conv1 = nn.Conv2d(1024, 1, 4)
+		self.conv2 = nn.Conv2d(1,1,5)
 
 	def forward(self, x):
-		output = torch.sigmoid(self.conv(x))
-
+		print("Input Shape for DHead: ", x.shape)
+		output = torch.sigmoid(self.conv1(x))
+		output = torch.sigmoid(self.conv2(output))
+		print("Output Shape for DHead: ", output.shape)
 		return output
 
 class QHead(nn.Module):
-  def __init__(self):
-    super().__init__()
+	def __init__(self):
+		super().__init__()
 
-    self.conv1 = nn.Conv2d(1024, 512, 4, bias=False)
-    self.bn1 = nn.BatchNorm2d(512)
-    self.conv2 = nn.Conv2d(512, 256, 4, bias=False)
-    self.bn2 = nn.BatchNorm2d(256)
-    #self.conv3 = nn.Conv2d(256, 128, 4, bias=False)
-    #self.bn3 = nn.BatchNorm2d(128)
+		self.conv1 = nn.Conv2d(1024, 512, 4, bias=False)
+		self.bn1 = nn.BatchNorm2d(512)
+		self.conv2 = nn.Conv2d(512, 256, 4, bias=False)
+		self.bn2 = nn.BatchNorm2d(256)
+		#self.conv3 = nn.Conv2d(256, 128, 4, bias=False)
+		#self.bn3 = nn.BatchNorm2d(128)
 
-    self.conv_disc = nn.Conv2d(256, 570, 1)
+		self.conv_disc = nn.Conv2d(256, 570, 1)
 
-    self.conv_mu = nn.Conv2d(256, 1, 1)
-    self.conv_var = nn.Conv2d(256, 1, 1)
+		self.conv_mu = nn.Conv2d(256, 1, 1)
+		self.conv_var = nn.Conv2d(256, 1, 1)
 
-  def forward(self, x):
-    x = F.leaky_relu(self.bn1(self.conv1(x)), 0.1, inplace=True)
-    x = F.leaky_relu(self.bn2(self.conv2(x)), 0.1, inplace=True)
-
-    disc_logits = self.conv_disc(x).squeeze()
-
-    # Not used during training for celeba dataset.
-    mu = self.conv_mu(x).squeeze()
-    var = torch.exp(self.conv_var(x).squeeze())
-
-    return disc_logits, mu, var
+	def forward(self, x):
+		print("QHead Input shape: ", x.shape)
+		x = F.leaky_relu(self.bn1(self.conv1(x)), 0.1, inplace=True)
+		print("QHead shape after conv1: ", x.shape)
+		x = F.leaky_relu(self.bn2(self.conv2(x)), 0.1, inplace=True)
+		print("QHead shape after conv2: ", x.shape)
+		disc_logits = self.conv_disc(x).squeeze()
+		print("QHead disc_logits shape: ", x.shape)
+		# Not used during training for celeba dataset.
+		mu = self.conv_mu(x).squeeze()
+		print("QHead mu shape: ", x.shape)
+		var = torch.exp(self.conv_var(x).squeeze())
+		print("QHead var shape: ", x.shape)
+		return disc_logits, mu, var
