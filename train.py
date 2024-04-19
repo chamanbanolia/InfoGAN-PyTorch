@@ -35,7 +35,7 @@ device = torch.device("cuda:0" if(torch.cuda.is_available()) else "cpu")
 print(device, " will be used.\n")
 
 # Saving directory
-save_root = '/kaggle/working # Kaggle
+save_root = '/kaggle/working' # Kaggle
 #save_root = '/home/chaman_1830628/Desktop/IITB/Sem2/GNR638/InfoGAN-PyTorch-master/results/patternnet_results' # machine path
 dataloader = get_data(params['dataset'], params['batch_size'])
 
