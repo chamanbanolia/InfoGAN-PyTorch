@@ -37,8 +37,8 @@ print(device, " will be used.\n")
 
 # Saving directory
 save_root = '/kaggle/working' # Kaggle
-if not os.path.exists(os.path.join(save_root,checkpoint)):
-    os.makedirs(os.path.join(save_root,checkpoint))
+if not os.path.exists(os.path.join(save_root,'checkpoint')):
+    os.makedirs(os.path.join(save_root,'checkpoint'))
     
 #save_root = '/home/chaman_1830628/Desktop/IITB/Sem2/GNR638/InfoGAN-PyTorch-master/results/patternnet_results' # machine path
 dataloader = get_data(params['dataset'], params['batch_size'])
