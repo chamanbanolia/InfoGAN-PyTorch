@@ -228,19 +228,21 @@ for epoch in range(params['num_epochs']):
         optimG.step()
 
         # Check progress of training.
-        if i != 0 and i%100 == 0:
-            print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f'
-                  % (epoch+1, params['num_epochs'], i, len(dataloader), 
-                    D_loss.item(), G_loss.item()))
+        #if i != 0 and i%100 == 0:
+        #    print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f'
+        #          % (epoch+1, params['num_epochs'], i, len(dataloader), 
+        #           D_loss.item(), G_loss.item()))
+        
 
         # Save the losses for plotting.
         G_losses.append(G_loss.item())
         D_losses.append(D_loss.item())
 
         iters += 1
-
+    #print('Loss_D: %.4f\tLoss_G: %.4f', % (D_loss.item(), G_loss.item()))
     epoch_time = time.time() - epoch_start_time
     print("Time taken for Epoch %d: %.2fs" %(epoch + 1, epoch_time))
+    print(f'Loss_D: {D_loss.item():.4f}\tLoss_G: {G_loss.item():.4f}\n')
     # Generate image after each epoch to check performance of the generator. Used for creating animated gif later.
     with torch.no_grad():
         gen_data = netG(fixed_noise).detach().cpu()
