@@ -87,19 +87,19 @@ plt.close('all')
 # Initialise the network.
 netG = Generator().to(device)
 netG.apply(weights_init)
-print(netG)
+#print(netG)
 
 discriminator = Discriminator().to(device)
 discriminator.apply(weights_init)
-print(discriminator)
+#print(discriminator)
 
 netD = DHead().to(device)
 netD.apply(weights_init)
-print(netD)
+#print(netD)
 
 netQ = QHead().to(device)
 netQ.apply(weights_init)
-print(netQ)
+#print(netQ)
 
 # Loss for discrimination between real and fake images.
 criterionD = nn.BCELoss()
@@ -242,7 +242,7 @@ for epoch in range(params['num_epochs']):
     #print('Loss_D: %.4f\tLoss_G: %.4f', % (D_loss.item(), G_loss.item()))
     epoch_time = time.time() - epoch_start_time
     print("Time taken for Epoch %d: %.2fs" %(epoch + 1, epoch_time))
-    print(f'Loss_D: {D_loss.item():.4f}\tLoss_G: {G_loss.item():.4f}\n')
+    print(f'Loss_D: {D_loss.item():.4f}\tLoss_G: {G_loss.item():.4f}')
     # Generate image after each epoch to check performance of the generator. Used for creating animated gif later.
     with torch.no_grad():
         gen_data = netG(fixed_noise).detach().cpu()
